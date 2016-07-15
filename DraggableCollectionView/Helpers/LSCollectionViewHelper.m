@@ -39,6 +39,7 @@ typedef NS_ENUM(NSInteger, _ScrollingDirection) {
     BOOL canScroll;
 }
 @property (readonly, nonatomic) LSCollectionViewLayoutHelper *layoutHelper;
+@property (nonatomic) BOOL registeredAsObserver;
 @end
 
 @implementation LSCollectionViewHelper
@@ -47,44 +48,40 @@ typedef NS_ENUM(NSInteger, _ScrollingDirection) {
 {
     self = [super init];
     if (self) {
+        _registeredAsObserver = false;
         _collectionView = collectionView;
-        [_collectionView addObserver:self
-                          forKeyPath:@"collectionViewLayout"
-                             options:0
-                             context:&kObservingCollectionViewLayoutContext];
         _scrollingEdgeInsets = UIEdgeInsetsMake(50.0f, 50.0f, 50.0f, 50.0f);
         _scrollingSpeed = 300.f;
         
-        _longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc]
-                                       initWithTarget:self
-                                       action:@selector(handleLongPressGesture:)];
+        _longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressGesture:)];
         [_collectionView addGestureRecognizer:_longPressGestureRecognizer];
         
-        _panPressGestureRecognizer = [[UIPanGestureRecognizer alloc]
-                                      initWithTarget:self action:@selector(handlePanGesture:)];
+        _panPressGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
         _panPressGestureRecognizer.delegate = self;
-
         [_collectionView addGestureRecognizer:_panPressGestureRecognizer];
-        
-        for (UIGestureRecognizer *gestureRecognizer in _collectionView.gestureRecognizers) {
-            if ([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]]) {
-                [gestureRecognizer requireGestureRecognizerToFail:_longPressGestureRecognizer];
-                break;
-            }
-        }
         
         [self layoutChanged];
     }
     return self;
 }
 
-- (LSCollectionViewLayoutHelper *)layoutHelper
-{
+- (void) collectionViewWillAppear {
+    if (_registeredAsObserver == false) {
+        _registeredAsObserver = true;
+        [_collectionView addObserver:self forKeyPath:@"collectionViewLayout" options:0 context:&kObservingCollectionViewLayoutContext];
+    }
+}
+
+- (void) collectionViewWillDisappear {
+    _registeredAsObserver = false;
+    [_collectionView removeObserver:self forKeyPath:@"collectionViewLayout"];
+}
+
+- (LSCollectionViewLayoutHelper *)layoutHelper {
     return [(id <UICollectionViewLayout_Warpable>)self.collectionView.collectionViewLayout layoutHelper];
 }
 
-- (void)layoutChanged
-{
+- (void)layoutChanged {
     canWarp = [self.collectionView.collectionViewLayout conformsToProtocol:@protocol(UICollectionViewLayout_Warpable)];
     canScroll = [self.collectionView.collectionViewLayout respondsToSelector:@selector(scrollDirection)];
     _longPressGestureRecognizer.enabled = _panPressGestureRecognizer.enabled = canWarp && self.enabled;

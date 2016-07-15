@@ -16,4 +16,8 @@
 @property (nonatomic, assign) UIEdgeInsets scrollingEdgeInsets;
 @property (nonatomic, assign) CGFloat scrollingSpeed;
 @property (nonatomic, assign) BOOL enabled;
+
+- (void) collectionViewWillAppear;
+- (void) collectionViewWillDisappear;
+
 @end
