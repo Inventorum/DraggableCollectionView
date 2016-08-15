@@ -27,8 +27,7 @@ typedef NS_ENUM(NSInteger, _ScrollingDirection) {
     _ScrollingDirectionRight
 };
 
-@interface LSCollectionViewHelper ()
-{
+@interface LSCollectionViewHelper () {
     NSIndexPath *lastIndexPath;
     UIImageView *mockCell;
     CGPoint mockCenter;
@@ -44,8 +43,7 @@ typedef NS_ENUM(NSInteger, _ScrollingDirection) {
 
 @implementation LSCollectionViewHelper
 
-- (id)initWithCollectionView:(UICollectionView *)collectionView
-{
+- (id)initWithCollectionView:(UICollectionView *)collectionView {
     self = [super init];
     if (self) {
         _registeredAsObserver = false;
@@ -87,8 +85,7 @@ typedef NS_ENUM(NSInteger, _ScrollingDirection) {
     _longPressGestureRecognizer.enabled = _panPressGestureRecognizer.enabled = canWarp && self.enabled;
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if (context == &kObservingCollectionViewLayoutContext) {
         [self layoutChanged];
     }
@@ -97,8 +94,7 @@ typedef NS_ENUM(NSInteger, _ScrollingDirection) {
     }
 }
 
-- (void)setEnabled:(BOOL)enabled
-{
+- (void)setEnabled:(BOOL)enabled {
     _enabled = enabled;
     _longPressGestureRecognizer.enabled = canWarp && enabled;
     _panPressGestureRecognizer.enabled = canWarp && enabled;
@@ -128,16 +124,14 @@ typedef NS_ENUM(NSInteger, _ScrollingDirection) {
     }
 }
 
-- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
-{
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     if([gestureRecognizer isEqual:_panPressGestureRecognizer]) {
         return self.layoutHelper.fromIndexPath != nil;
     }
     return YES;
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     if ([gestureRecognizer isEqual:_longPressGestureRecognizer]) {
         return [otherGestureRecognizer isEqual:_panPressGestureRecognizer];
     }
@@ -149,8 +143,7 @@ typedef NS_ENUM(NSInteger, _ScrollingDirection) {
     return NO;
 }
 
-- (NSIndexPath *)indexPathForItemClosestToPoint:(CGPoint)point
-{
+- (NSIndexPath *)indexPathForItemClosestToPoint:(CGPoint)point {
     NSArray *layoutAttrsInRect;
     NSInteger closestDist = NSIntegerMax;
     NSIndexPath *indexPath;
@@ -206,8 +199,7 @@ typedef NS_ENUM(NSInteger, _ScrollingDirection) {
     return indexPath;
 }
 
-- (void)handleLongPressGesture:(UILongPressGestureRecognizer *)sender
-{
+- (void)handleLongPressGesture:(UILongPressGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateChanged) {
         return;
     }
@@ -297,8 +289,7 @@ typedef NS_ENUM(NSInteger, _ScrollingDirection) {
     }
 }
 
-- (void)warpToIndexPath:(NSIndexPath *)indexPath
-{
+- (void)warpToIndexPath:(NSIndexPath *)indexPath {
     if(indexPath == nil || [lastIndexPath isEqual:indexPath]) {
         return;
     }
@@ -317,8 +308,7 @@ typedef NS_ENUM(NSInteger, _ScrollingDirection) {
     } completion:nil];
 }
 
-- (void)handlePanGesture:(UIPanGestureRecognizer *)sender
-{
+- (void)handlePanGesture:(UIPanGestureRecognizer *)sender {
     if(sender.state == UIGestureRecognizerStateChanged) {
         // Move mock to match finger
         fingerTranslation = [sender translationInView:self.collectionView];

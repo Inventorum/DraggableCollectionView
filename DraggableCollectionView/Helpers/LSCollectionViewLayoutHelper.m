@@ -12,8 +12,7 @@
 
 @implementation LSCollectionViewLayoutHelper
 
-- (id)initWithCollectionViewLayout:(UICollectionViewLayout<UICollectionViewLayout_Warpable>*)collectionViewLayout
-{
+- (id)initWithCollectionViewLayout:(UICollectionViewLayout<UICollectionViewLayout_Warpable>*)collectionViewLayout {
     self = [super init];
     if (self) {
         _collectionViewLayout = collectionViewLayout;
@@ -21,8 +20,7 @@
     return self;
 }
 
-- (NSArray *)modifiedLayoutAttributesForElements:(NSArray *)elements
-{
+- (NSArray *)modifiedLayoutAttributesForElements:(NSArray *)elements {
     UICollectionView *collectionView = self.collectionViewLayout.collectionView;
     NSIndexPath *fromIndexPath = self.fromIndexPath;
     NSIndexPath *toIndexPath = self.toIndexPath;
@@ -60,12 +58,9 @@
             if (layoutAttributes.indexPath.item != 0) {
                 CGPoint previousCenter = [self.collectionViewLayout layoutAttributesForItemAtIndexPath:[NSIndexPath indexPathForItem:[collectionView numberOfItemsInSection:toIndexPath.section] - 2 inSection:toIndexPath.section]].center;
                 CGPoint currentCenter = [self.collectionViewLayout layoutAttributesForItemAtIndexPath:[NSIndexPath indexPathForItem:[collectionView numberOfItemsInSection:toIndexPath.section] - 1 inSection:toIndexPath.section]].center;
-                
-                
-                
+
                 layoutAttributes.center = CGPointMake(currentCenter.x + currentCenter.x - previousCenter.x, currentCenter.y);
-                
-                
+
                 // If its going outside collection view on left, then move it
                 if (layoutAttributes.center.x < 0) {
                     // standart spacing:
